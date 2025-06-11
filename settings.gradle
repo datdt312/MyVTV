@@ -21,3 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "MyVTV"
 include ':app'
+include ':app2'
+include ':timeLine'
+include ':timeLine2'
+include ':myplayer'
