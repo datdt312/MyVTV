@@ -11,7 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.IntDef
 import androidx.core.content.ContextCompat
-import com.sam.video.timeline.R
+import com.btbtech.myvtv.R
 import com.sam.video.timeline.widget.SelectAreaView.OnChangeListener.Companion.MODE_END
 import com.sam.video.timeline.widget.SelectAreaView.OnChangeListener.Companion.MODE_START
 import com.sam.video.timeline.widget.SelectAreaView.OnChangeListener.Companion.MODE_WHOLE
@@ -216,7 +216,7 @@ class SelectAreaView @JvmOverloads constructor(
         }
 
         override fun onScroll(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             distanceX: Float,
             distanceY: Float
@@ -259,7 +259,7 @@ class SelectAreaView @JvmOverloads constructor(
 
         override fun onFling(
             e1: MotionEvent?,
-            e2: MotionEvent?,
+            e2: MotionEvent,
             velocityX: Float,
             velocityY: Float
         ): Boolean {

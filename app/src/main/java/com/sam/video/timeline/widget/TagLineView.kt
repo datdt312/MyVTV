@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.sam.video.timeline.R
+import com.btbtech.myvtv.R
 import com.sam.video.timeline.bean.TagLineViewData
 import com.sam.video.timeline.bean.TagType
 import com.sam.video.timeline.listener.TagSelectAreaMagnetOnChangeListener
@@ -570,7 +570,7 @@ open class TagLineView @JvmOverloads constructor(
 
     private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
         var downItem: TagLineViewData? = null
-        override fun onDown(e: MotionEvent?): Boolean {
+        override fun onDown(e: MotionEvent): Boolean {
             eventHandle.removeLongPressEvent()
             if (e != null) {
                 downItem = findGroupItemByX(e.x)
@@ -592,7 +592,7 @@ open class TagLineView @JvmOverloads constructor(
             return super.onDown(e)
         }
 
-        override fun onSingleTapUp(e: MotionEvent?): Boolean {
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
             if (e != null) {
                 if (eventHandle.wholeMoveMode) {
                     return false
@@ -623,7 +623,7 @@ open class TagLineView @JvmOverloads constructor(
         }
 
         override fun onScroll(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             distanceX: Float,
             distanceY: Float

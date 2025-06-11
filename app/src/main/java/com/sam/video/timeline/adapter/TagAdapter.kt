@@ -6,13 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.chad.library.adapter.base.BaseViewHolder
-import com.sam.video.timeline.R
+import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.btbtech.myvtv.R
 import com.sam.video.timeline.bean.TagLineViewData
 import com.sam.video.timeline.bean.TagType
-import kotlinx.android.synthetic.main.item_tag_img.view.*
-import kotlinx.android.synthetic.main.item_tag_img.view.selectView
-import kotlinx.android.synthetic.main.item_tag_text.view.*
+import com.sam.video.timeline.widget.RoundImageView
+import com.sam.video.timeline.widget.RoundTextView
 
 
 /**
@@ -48,14 +47,14 @@ class TagAdapter(val context: Context, val data: MutableList<TagLineViewData>) :
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val item = data[position]
-        holder.itemView.selectView.visibility =  if(selectedItem === item) View.VISIBLE else View.GONE
+        holder.itemView.findViewById<View>(R.id.selectView).visibility =  if(selectedItem === item) View.VISIBLE else View.GONE
         if (getItemViewType(position) == TagType.ITEM_TYPE_IMG) {
-            holder.itemView.iv?.let {
+            holder.itemView.findViewById<RoundImageView?>(R.id.iv)?.let {
                 it.setBackgroundColor(item.color)
                 Glide.with(it).load(item.content).into(it)
             }
         } else {
-            holder.itemView.tv?.apply {
+            holder.itemView.findViewById<RoundTextView?>(R.id.iv)?.apply {
                 setBackgroundColor(item.color)
                 text = item.content
             }

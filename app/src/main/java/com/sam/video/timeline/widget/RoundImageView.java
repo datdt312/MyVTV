@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.sam.video.timeline.R;
+import com.btbtech.myvtv.R;
 
 /**
  * 通过 PorterDuffXfermode 得到圆角ImageView

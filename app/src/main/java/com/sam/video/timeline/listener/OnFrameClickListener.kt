@@ -40,7 +40,7 @@ abstract class OnFrameClickListener(
     }
 
     private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
-        override fun onDown(e: MotionEvent?): Boolean {
+        override fun onDown(e: MotionEvent): Boolean {
             return true
         }
 
@@ -52,7 +52,7 @@ abstract class OnFrameClickListener(
             return false
         }
 
-        override fun onLongPress(e: MotionEvent?) {
+        override fun onLongPress(e: MotionEvent) {
             super.onLongPress(e)
 //            Log.d("Sam", " onLongPress ${gestureDetector.isLongpressEnabled} ")
             if (!gestureDetector.isLongpressEnabled || recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE) {

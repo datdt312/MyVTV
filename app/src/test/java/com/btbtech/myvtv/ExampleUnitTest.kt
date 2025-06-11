@@ -1,4 +1,4 @@
-package com.sam.video.timeline
+package com.btbtech.myvtv
 
 import org.junit.Test
 

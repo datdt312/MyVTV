@@ -12,7 +12,6 @@ import android.widget.FrameLayout
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.FlingAnimation
 import androidx.dynamicanimation.animation.FloatValueHolder
-import com.sam.video.timeline.R.id.rvFrame
 import com.sam.video.timeline.listener.VideoPlayerOperate
 
 /**
@@ -120,7 +119,7 @@ class ZoomFrameLayout : FrameLayout,
             return true
         }
 
-        override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
+        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
             scaleListener?.onScaleBegin(detector)
             return super.onScaleBegin(detector)
         }
@@ -137,7 +136,7 @@ class ZoomFrameLayout : FrameLayout,
      * 滑动、双击监听
      */
     val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
-        override fun onDoubleTap(e: MotionEvent?): Boolean {
+        override fun onDoubleTap(e: MotionEvent): Boolean {
             if (!scaleEnable || e?.pointerCount ?: 1 > 1) {
                 return false
             }
@@ -157,14 +156,14 @@ class ZoomFrameLayout : FrameLayout,
             return true
         }
 
-        override fun onSingleTapUp(e: MotionEvent?): Boolean {
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
             performClick()
             return super.onSingleTapUp(e)
         }
 
         override fun onScroll(
             e1: MotionEvent?,
-            e2: MotionEvent?,
+            e2: MotionEvent,
             distanceX: Float,
             distanceY: Float
         ): Boolean {
@@ -195,7 +194,7 @@ class ZoomFrameLayout : FrameLayout,
 
         override fun onFling(
             e1: MotionEvent?,
-            e2: MotionEvent?,
+            e2: MotionEvent,
             velocityX: Float,
             velocityY: Float
         ): Boolean {
@@ -308,7 +307,7 @@ class ZoomFrameLayout : FrameLayout,
     abstract class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         var isScaled = false
 
-        override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
+        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
             isScaled = true
             return super.onScaleBegin(detector)
         }

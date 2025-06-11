@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.sam.video.timeline.R;
+import com.btbtech.myvtv.R;
 
 
 /**

@@ -6,7 +6,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sam.video.timeline.adapter.VideoFrameAdapter
-import com.sam.video.timeline.R
+import com.btbtech.myvtv.R
 import com.sam.video.util.dp2px
 
 

@@ -3,10 +3,10 @@ package com.sam.video.timeline.adapter
 import android.view.Gravity
 import android.widget.FrameLayout
 import android.widget.ImageView
+import com.btbtech.myvtv.R
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.BaseViewHolder
-import com.sam.video.timeline.R
+import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.sam.video.timeline.bean.VideoFrameData
 import com.sam.video.timeline.widget.RoundRectMask
 

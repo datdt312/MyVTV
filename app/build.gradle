@@ -1,19 +1,22 @@
-apply plugin: 'com.android.application'
-
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+}
 
 android {
-    compileSdkVersion 28
+    namespace 'com.btbtech.myvtv'
+    compileSdk 36
+
     defaultConfig {
-        applicationId "com.sam.video.timeline"
-        minSdkVersion 19
-        targetSdkVersion 28
+        applicationId "com.btbtech.myvtv"
+        minSdk 24
+        targetSdk 36
         versionCode 1
         versionName "1.0"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -21,34 +24,36 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+    buildFeatures {
+        viewBinding true
+        buildConfig true
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.material
+    implementation libs.androidx.activity
+    implementation libs.androidx.constraintlayout
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
 
+    api "com.github.bumptech.glide:glide:4.11.0"
+    annotationProcessor "com.github.bumptech.glide:compiler:4.11.0"
+
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
-    api "com.github.CymChad:BaseRecyclerViewAdapterHelper:$quickAdapterVersion"
+    implementation "io.github.cymchad:BaseRecyclerViewAdapterHelper:3.0.14"
 
-    api 'androidx.lifecycle:lifecycle-livedata-core:2.0.0'
-    api 'androidx.lifecycle:lifecycle-viewmodel:2.0.0'
-    api 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-
-    api "com.github.bumptech.glide:glide:$glideVersion"
-    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
-    api 'androidx.annotation:annotation:1.1.0@jar'
-    api 'com.google.android:flexbox:1.0.0'
-
-
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 }

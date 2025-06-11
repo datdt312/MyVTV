@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.sam.video.timeline.R
+import com.btbtech.myvtv.R
 import com.sam.video.util.dp2px
 import kotlin.math.ceil
 import kotlin.math.roundToInt

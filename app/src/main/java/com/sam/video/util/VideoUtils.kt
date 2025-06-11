@@ -16,8 +16,7 @@ object VideoUtils {
         val retriever = MediaMetadataRetriever()
         retriever.setDataSource(context, Uri.fromFile(File(videoPath)))
         val duration =
-            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                .toLong()
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong()
         retriever.release()
         return duration
     }

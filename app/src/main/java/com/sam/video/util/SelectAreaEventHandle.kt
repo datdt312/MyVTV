@@ -168,9 +168,9 @@ class SelectAreaEventHandle(context: Context) {
 
             private var lastAnimationValue = 0
 
-            override fun onAnimationUpdate(animation: ValueAnimator?) {
+            override fun onAnimationUpdate(animation: ValueAnimator) {
                 val timeLineValue = timeLineValue ?: return
-                val value = animation?.animatedValue as Int
+                val value = animation.animatedValue as Int
                 val time = value - lastAnimationValue
                 lastAnimationValue = if (value == 10000) 0 else value
                 var offsetPx = (time * horizontalScrollMinSpeed * horizontalScrollSpeedScale).dp
@@ -190,19 +190,19 @@ class SelectAreaEventHandle(context: Context) {
             }
         })
         valueAnimator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {
+            override fun onAnimationRepeat(p0: Animator) {
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
                 if (autoHorizontalScrollAnimator == valueAnimator) {
                     autoHorizontalScrollAnimator = null
                 }
             }
 
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
             }
         })
 
@@ -211,7 +211,7 @@ class SelectAreaEventHandle(context: Context) {
     }
 
     fun onScroll(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         distanceX: Float,
         distanceY: Float

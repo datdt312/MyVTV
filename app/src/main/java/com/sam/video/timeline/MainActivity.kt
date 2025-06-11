@@ -14,6 +14,8 @@ import androidx.annotation.MainThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.btbtech.myvtv.R
+import com.btbtech.myvtv.databinding.ActivityMainBinding
 import com.sam.video.timeline.bean.TagLineViewData
 import com.sam.video.timeline.bean.VideoClip
 import com.sam.video.timeline.listener.Click
@@ -27,25 +29,28 @@ import com.sam.video.util.MediaStoreUtil
 import com.sam.video.util.ScreenUtil
 import com.sam.video.util.VideoUtils
 import com.sam.video.util.getScreenWidth
-import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val videos = mutableListOf<VideoClip>()
     val timeLineValue = TimeLineBaseValue()
 
+    private lateinit var  binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        tvAddVideo.setOnClickListener(this)
-        tvAddTag.setOnClickListener(this)
-        ivRemove.setOnClickListener(this)
-        zoomFrameLayout.setOnClickListener(this)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+//        setContentView(R.layout.activity_main)
+        binding.tvAddVideo.setOnClickListener(this)
+        binding.tvAddTag.setOnClickListener(this)
+        binding.ivRemove.setOnClickListener(this)
+        binding.zoomFrameLayout.setOnClickListener(this)
 
-        val halfScreenWidth = rvFrame.context.getScreenWidth() / 2
-        rvFrame.setPadding(halfScreenWidth, 0, halfScreenWidth, 0)
+        val halfScreenWidth = binding.rvFrame.context.getScreenWidth() / 2
+        binding.rvFrame.setPadding(halfScreenWidth, 0, halfScreenWidth, 0)
 
-        rvFrame.addOnItemTouchListener(object : OnFrameClickListener(rvFrame) {
+        binding.rvFrame.addOnItemTouchListener(object : OnFrameClickListener(binding.rvFrame) {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
                 return true
             }
@@ -57,8 +62,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             override fun onClick(e: MotionEvent): Boolean {
                 //点击的位置
-                rvFrame.findVideoByX(e.x)?.let {
-                    if (rvFrame.findVideoByX(rvFrame.paddingLeft.toFloat()) == it) {
+                binding.rvFrame.findVideoByX(e.x)?.let {
+                    if (binding.rvFrame.findVideoByX(binding.rvFrame.paddingLeft.toFloat()) == it) {
                         //已选中，切换状态
                         selectVideo = if (selectVideo == it) {
                             null
@@ -67,12 +72,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     } else {
                         //移动用户点击的位置到中间
-                        rvFrame.postDelayed(
+                        binding.rvFrame.postDelayed(
                             {
                                 if (selectVideo != null) {
-                                    selectVideo = rvFrame.findVideoByX(e.x)
+                                    selectVideo = binding.rvFrame.findVideoByX(e.x)
                                 }
-                                rvFrame.smoothScrollBy((e.x - rvFrame.paddingLeft).toInt(), 0)
+                                binding.rvFrame.smoothScrollBy((e.x - binding.rvFrame.paddingLeft).toInt(), 0)
                             },
                             100
                         )
@@ -86,7 +91,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
 
-        rvFrame.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.rvFrame.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -96,13 +101,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         })
 
-        tagView.onItemClickListener = object : TagLineView.OnItemClickListener {
+        binding.tagView.onItemClickListener = object : TagLineView.OnItemClickListener {
             override fun onItemClick(item: TagLineViewData, x: Float) {
                 selectTag(item)
             }
 
             override fun onItemGroupClick(groupData: List<TagLineViewData>, x: Float) {
-                val activeItem = tagView.activeItem
+                val activeItem = binding.tagView.activeItem
                 val isActiveGroup = activeItem != null && groupData.indexOfFirst { it === activeItem } >= 0
                 if (isActiveGroup) {
                     showTagPopWindow(groupData, x)
@@ -116,29 +121,29 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         bindVideoData()
-        requestPermission()
+//        requestPermission()
     }
 
     private var tagPopWindow: TagPopWindow? = null
     private val windowHeight = ScreenUtil.getInstance().realSizeHeight
     private fun showTagPopWindow(tagList: List<TagLineViewData>, x: Float) {
-        val popWindow = tagPopWindow ?: TagPopWindow(zoomFrameLayout.context).also {
+        val popWindow = tagPopWindow ?: TagPopWindow(binding.zoomFrameLayout.context).also {
             tagPopWindow = it
             it.onItemClickListener = Click.OnItemViewClickListener { _, t, _ ->
                 selectTag(t, true)
                 tagPopWindow?.dismiss()
             }
         }
-        popWindow.updateData(tagList, tagView.activeItem)
+        popWindow.updateData(tagList, binding.tagView.activeItem)
         val location = IntArray(2)
-        tagView.getLocationInWindow(location)
-        popWindow.showAtTriangleX(tagView, x.toInt(), windowHeight - location[1]) //这里的位置计算考虑了最高选中的情况
+        binding.tagView.getLocationInWindow(location)
+        popWindow.showAtTriangleX(binding.tagView, x.toInt(), windowHeight - location[1]) //这里的位置计算考虑了最高选中的情况
     }
 
     private val videoSelectAreaChangeListener by lazy {
-        object : SelectAreaMagnetOnChangeListener(selectAreaView.context) {
+        object : SelectAreaMagnetOnChangeListener(binding.selectAreaView.context) {
             override val timeJumpOffset: Long
-                get() = selectAreaView.eventHandle.timeJumpOffset
+                get() = binding.selectAreaView.eventHandle.timeJumpOffset
 
             override val timeLineValue = (this@MainActivity).timeLineValue
 
@@ -176,9 +181,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     selectVideo.startAtMs += (downSpeed * startOffset).toLong()
                     //起始位置 + 吸附产生的时间差
                     selectVideo.startAtMs += checkTimeJump(
-                        selectAreaView.startTime,
+                        binding.selectAreaView.startTime,
                         startOffset < 0
-                    ) - selectAreaView.startTime
+                    ) - binding.selectAreaView.startTime
 
                     if (selectVideo.startAtMs < 0) {
                         selectVideo.startAtMs = 0
@@ -188,8 +193,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     }
 
 
-                    selectAreaView.endTime =
-                        selectAreaView.startTime + selectVideo.durationMs //这样是经过换算的
+                    binding.selectAreaView.endTime =
+                        binding.selectAreaView.startTime + selectVideo.durationMs //这样是经过换算的
                     val realOffsetTime = selectVideo.startAtMs - oldStartTime
                     if (fromUser) { //光标位置反向移动，保持时间轴和手的相对位置
                         timeLineValue.time -= (realOffsetTime / downSpeed).toLong()
@@ -203,19 +208,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     //   - 结束位置移动时，范围的起始位置也不变，结束位置会变。
                     val oldEndMs = selectVideo.endAtMs
                     selectVideo.endAtMs += (downSpeed * endOffset).toLong()
-                    selectAreaView.endTime = selectAreaView.startTime + selectVideo.durationMs
+                    binding.selectAreaView.endTime = binding.selectAreaView.startTime + selectVideo.durationMs
 
                     selectVideo.endAtMs += checkTimeJump(
-                        selectAreaView.endTime,
+                        binding.selectAreaView.endTime,
                         endOffset < 0
-                    ) - selectAreaView.endTime
+                    ) - binding.selectAreaView.endTime
                     if (selectVideo.endAtMs < selectVideo.startAtMs + timeLineValue.minClipTime) {
                         selectVideo.endAtMs = selectVideo.startAtMs + timeLineValue.minClipTime
                     }
                     if (selectVideo.endAtMs > selectVideo.originalDurationMs) {
                         selectVideo.endAtMs = selectVideo.originalDurationMs
                     }
-                    selectAreaView.endTime = selectAreaView.startTime + selectVideo.durationMs
+                    binding.selectAreaView.endTime = binding.selectAreaView.startTime + selectVideo.durationMs
                     val realOffsetTime = selectVideo.endAtMs - oldEndMs
                     if (!fromUser) {
                         //结束位置，如果是动画，光标需要跟着动画
@@ -233,9 +238,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private val tagSelectAreaChangeListener: TagSelectAreaMagnetOnChangeListener by lazy {
-        object : TagSelectAreaMagnetOnChangeListener(tagView, tagView.context) {
+        object : TagSelectAreaMagnetOnChangeListener(binding.tagView, binding.tagView.context) {
             override val timeJumpOffset: Long
-                get() = selectAreaView.eventHandle.timeJumpOffset
+                get() = binding.selectAreaView.eventHandle.timeJumpOffset
 
             override fun onTouchDown() {
                 endTimeEdge = timeLineValue?.duration ?: 0L
@@ -243,7 +248,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
 
             override val timeLineValue: TimeLineBaseValue?
-                get() = zoomFrameLayout.timeLineValue
+                get() = binding.zoomFrameLayout.timeLineValue
 
             override fun afterSelectAreaChange(realOffset: Long, fromUser: Boolean) {
                 handleAfterSelectAreaChange(realOffset, fromUser)
@@ -256,17 +261,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
 
-        tagView.dataChange()
-        tagView.activeItem?.let { TagLineViewData ->
-            selectAreaView.startTime = TagLineViewData.startTime
-            selectAreaView.endTime = TagLineViewData.endTime
+        binding.tagView.dataChange()
+        binding.tagView.activeItem?.let { TagLineViewData ->
+            binding.selectAreaView.startTime = TagLineViewData.startTime
+            binding.selectAreaView.endTime = TagLineViewData.endTime
         }
 
         if (fromUser) {
-            selectAreaView.invalidate()
+            binding.selectAreaView.invalidate()
         } else {
             timeLineValue.time += realOffset
-            zoomFrameLayout.dispatchUpdateTime()
+            binding.zoomFrameLayout.dispatchUpdateTime()
         }
 
     }
@@ -277,19 +282,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      */
     private fun selectTag(item: TagLineViewData, moveTop: Boolean = false) {
         selectVideo = null
-        rvFrame.hasBorder = false
-        tagView.activeItem = item
-        selectAreaView.startTime = item.startTime
-        selectAreaView.endTime = item.endTime
-        selectAreaView.visibility = View.VISIBLE
-        selectAreaView.onChangeListener = tagSelectAreaChangeListener
-        selectAreaView.invalidate()
+        binding.rvFrame.hasBorder = false
+        binding.tagView.activeItem = item
+        binding.selectAreaView.startTime = item.startTime
+        binding.selectAreaView.endTime = item.endTime
+        binding.selectAreaView.visibility = View.VISIBLE
+        binding.selectAreaView.onChangeListener = tagSelectAreaChangeListener
+        binding.selectAreaView.invalidate()
         if (moveTop) {
-            tagView.bringTagToTop(item)
+            binding.tagView.bringTagToTop(item)
         } else {
-            tagView.invalidate()
+            binding.tagView.invalidate()
         }
-        ivRemove.visibility = View.VISIBLE
+        binding.ivRemove.visibility = View.VISIBLE
         tagSelectAreaChangeListener.updateTimeSetData(item)
 
     }
@@ -297,19 +302,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * 清除选中模式
      */
     private fun clearTagSelect() {
-        selectAreaView.visibility = View.GONE
-        rvFrame.hasBorder = true
-        tagView.activeItem = null
+        binding.selectAreaView.visibility = View.GONE
+        binding.rvFrame.hasBorder = true
+        binding.tagView.activeItem = null
     }
 
 
     private fun bindVideoData() {
-        zoomFrameLayout.scaleEnable = true
-        rvFrame.videoData = videos
+        binding.zoomFrameLayout.scaleEnable = true
+        binding.rvFrame.videoData = videos
 
-        zoomFrameLayout.timeLineValue = timeLineValue
-        zoomFrameLayout.dispatchTimeLineValue()
-        zoomFrameLayout.dispatchScaleChange()
+        binding.zoomFrameLayout.timeLineValue = timeLineValue
+        binding.zoomFrameLayout.dispatchTimeLineValue()
+        binding.zoomFrameLayout.dispatchScaleChange()
     }
 
     /**
@@ -337,8 +342,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             } else {
                 fitScaleForScreen()
             }
-            zoomFrameLayout.dispatchTimeLineValue()
-            zoomFrameLayout.dispatchScaleChange()
+            binding.zoomFrameLayout.dispatchTimeLineValue()
+            binding.zoomFrameLayout.dispatchScaleChange()
         }
     }
 
@@ -357,17 +362,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * */
     private fun updateVideoClip() {
         updateTimeLineValue(true)
-        rvFrame.rebindFrameInfo()
-        rulerView.invalidate()
-        selectAreaView.invalidate()
+        binding.rvFrame.rebindFrameInfo()
+        binding.rulerView.invalidate()
+        binding.selectAreaView.invalidate()
     }
 
     override fun onClick(v: View?) {
         when (v) {
-            tvAddVideo -> startGetVideoIntent()
-            ivRemove -> removeLastVideo()
-            tvAddTag -> addTagClick()
-            zoomFrameLayout -> clearTagSelect()
+            binding.tvAddVideo -> startGetVideoIntent()
+            binding.ivRemove -> removeLastVideo()
+            binding.tvAddTag -> addTagClick()
+            binding.zoomFrameLayout -> clearTagSelect()
         }
     }
 
@@ -377,7 +382,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var isOperateAreaSelect = false
 
     private fun clearSelectVideoIfNeed() {
-        if (selectVideo != null && !selectAreaView.timeInArea()
+        if (selectVideo != null && !binding.selectAreaView.timeInArea()
             && !isOperateAreaSelect //未操作区域选择时
         ) {
             selectVideo = null
@@ -424,7 +429,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun updateVideos() {
-        rvFrame.rebindFrameInfo()
+        binding.rvFrame.rebindFrameInfo()
         updateTimeLineValue(false)
     }
 
@@ -435,32 +440,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             field = value
             if (value == null) {
                 //取消选中
-                rvFrame.hasBorder = true
-                selectAreaView.visibility = View.GONE
+                binding.rvFrame.hasBorder = true
+                binding.selectAreaView.visibility = View.GONE
             } else {
                 clearTagSelect()
                 //选中视频
-                selectAreaView.startTime = 0
-                selectAreaView.onChangeListener = videoSelectAreaChangeListener
+                binding.selectAreaView.startTime = 0
+                binding.selectAreaView.onChangeListener = videoSelectAreaChangeListener
                 for ((index, item) in videos.withIndex()) {
                     if (item === value) {
-                        selectAreaView.offsetStart = if (index > 0) {
-                            rvFrame.halfDurationSpace
+                        binding.selectAreaView.offsetStart = if (index > 0) {
+                            binding.rvFrame.halfDurationSpace
                         } else {
                             0
                         }
-                        selectAreaView.offsetEnd = if (index < videos.size - 1) {
-                            rvFrame.halfDurationSpace
+                        binding.selectAreaView.offsetEnd = if (index < videos.size - 1) {
+                            binding.rvFrame.halfDurationSpace
                         } else {
                             0
                         }
                         break
                     }
-                    selectAreaView.startTime += item.durationMs
+                    binding.selectAreaView.startTime += item.durationMs
                 }
-                selectAreaView.endTime = selectAreaView.startTime + value.durationMs
-                rvFrame.hasBorder = false
-                selectAreaView.visibility = View.VISIBLE
+                binding.selectAreaView.endTime = binding.selectAreaView.startTime + value.durationMs
+                binding.rvFrame.hasBorder = false
+                binding.selectAreaView.visibility = View.VISIBLE
             }
         }
 
@@ -528,11 +533,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         addTag("面试官")
         addTag("山言两语")
 
-        tagView.addTextTag(
+        binding.tagView.addTextTag(
             "啦啦啦",
             500L,
             3000L,
-            tagView.getRandomColorForText()
+            binding.tagView.getRandomColorForText()
         )
     }
 
@@ -541,11 +546,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      */
     @MainThread
     private fun addTag(text: String) {
-        tagView.addTextTag(
+        binding.tagView.addTextTag(
             text,
             0L,
             1000L,
-            tagView.getRandomColorForText()
+            binding.tagView.getRandomColorForText()
         )
     }
 
